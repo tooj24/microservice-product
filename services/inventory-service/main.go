@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
+	"services/shared/eureka"
 )
 
 func main() {
@@ -10,6 +12,7 @@ func main() {
 		fx.Provide(
 			InitDatabase,
 			NewGinEngine,
+			eureka.NewEurekaServiceImpl,
 			NewInventoryRepositoryImpl,
 			NewInventoryServiceImpl,
 			NewInventoryController,
@@ -23,8 +26,12 @@ func NewGinEngine() *gin.Engine {
 	return engine
 }
 
-func RouteProvider(engine *gin.Engine, controller *InventoryController) {
+func RouteProvider(engine *gin.Engine, controller *InventoryController, eurekaServer eureka.EurekaService) {
+	port := eureka.RandomPort()
+
 	engine.GET(INVENTORY_URI, controller.GetStock)
 	engine.POST(INVENTORY_URI, controller.AddStock)
-	engine.Run(":8081")
+
+	eurekaServer.Register("inventory-service", "localhost", port)
+	engine.Run(fmt.Sprintf(":%d", port))
 }

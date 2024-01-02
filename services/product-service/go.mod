@@ -1,4 +1,4 @@
-module inventory-service
+module product-service
 
 go 1.21.5
 
@@ -7,6 +7,7 @@ require (
 	go.uber.org/fx v1.20.1
 	gorm.io/driver/mysql v1.5.2
 	gorm.io/gorm v1.25.5
+	services/shared v0.0.0
 )
 
 require (
@@ -42,3 +43,5 @@ require (
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace services/shared => ../shared
